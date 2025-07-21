@@ -1,49 +1,38 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.14)
 project(json_parser)
 
+# Enable C++17 or later
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# ----------------------------------------------------------------------------
-# Main Library
-# ----------------------------------------------------------------------------
-add_library(json_parser STATIC
+# Include header directory
+include_directories(include)
+
+# Create the core library
+add_library(json_parser
     src/json_parser.cpp
-    include/json_parser.h
 )
-target_include_directories(json_parser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-# ----------------------------------------------------------------------------
-# GoogleTest Setup (fetch if not available)
-# ----------------------------------------------------------------------------
+# Add GoogleTest via FetchContent
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
+  URL https://github.com/google/googletest/archive/refs/heads/main.zip
 )
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-# ----------------------------------------------------------------------------
-# Test Executable
-# ----------------------------------------------------------------------------
-file(GLOB_RECURSE TEST_SOURCES
-    tests/unit/*.cpp
-    tests/main.cpp
+# Add the test executable
+add_executable(json_parser_tests
+    tests/test_parse_primitives.cpp
+    # add more test files here
 )
-
-add_executable(json_parser_tests ${TEST_SOURCES})
 
 target_link_libraries(json_parser_tests
-    PRIVATE
-        gtest_main
-        json_parser
+    json_parser
+    gtest_main
 )
-
-target_include_directories(json_parser_tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 include(GoogleTest)
 gtest_discover_tests(json_parser_tests)

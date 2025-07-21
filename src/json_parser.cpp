@@ -3,7 +3,7 @@
 #include <cassert> // for assert()
 #include <cctype> // for isdigit()
 
-#include "json_parser.h"
+#include "json_parser/json_parser.h"
 
 
 using namespace JsonParser;
