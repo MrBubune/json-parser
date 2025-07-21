@@ -32,9 +32,9 @@ JsonValue JsonParser::ParsePrimitive(const std::string& text, text_it start, tex
   size_t float_point_index = substr.find(".");
 
   if (float_point_index >= (end - start)) { // integer
-    return {.i = std::stoi(substr)};
+    return JsonValue(std::stoi(substr));
   } else { // float(double)
-    return {.d = std::stod(substr) };
+    return JsonValue(std::stod(substr));
   }
 }
 
@@ -93,11 +93,11 @@ JsonValue JsonParser::ParseJsonHelper(const std::string& text, text_it& it) {
   assert(*it == '{'); // must start with the left curly bracket
   it++;
 
-  std::map<std::string, JsonValue>* json_map = new std::map<std::string, JsonValue>;
+  JsonObject json_map;
 
   do {
     const auto [key, value] = RetriveKeyValuePair(text, it);
-    (*json_map)[key] = value;
+    json_map[key] = value;
 
     while (*it == ' ' || *it == '\n') {
       it++;
@@ -106,5 +106,5 @@ JsonValue JsonParser::ParseJsonHelper(const std::string& text, text_it& it) {
 
   it++; // after '}'
 
-  return { .json = json_map };
+  return JsonValue(json_map);
 }
