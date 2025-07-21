@@ -8,9 +8,6 @@
 namespace JsonParser {
   using text_it = std::string::iterator;
 
-  /**
-   * @brief A union value representing the value part of (key, value) pair.
-   */
   union JsonValue {
     int i;
     double d;
