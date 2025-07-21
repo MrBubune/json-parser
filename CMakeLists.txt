@@ -8,8 +8,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Main Library
 # ----------------------------------------------------------------------------
 add_library(json_parser STATIC
-    json_parser.cpp
-    json_parser.h
+    src/json_parser.cpp
+    include/json_parser.h
 )
 target_include_directories(json_parser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 

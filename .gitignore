@@ -1,33 +1,45 @@
-# Prerequisites
-*.d
+# === CMake build artifacts ===
+/build/
+/CMakeFiles/
+/CMakeCache.txt
+/Makefile
+/install_manifest.txt
+/*.cmake
+/*.cbp
+/*.sln
+/*.vcxproj*
+/Testing/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# === VS Code ===
+.vscode/
+*.code-workspace
 
-# Precompiled Headers
-*.gch
-*.pch
+# === OS-specific files ===
+.DS_Store
+Thumbs.db
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
+# === Compiled files ===
 *.exe
 *.out
-*.app
-/.vscode
+*.obj
+*.o
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+*.pdb
+
+# === GoogleTest via FetchContent ===
+_build/
+build/_deps/
+
+# === Test data generated or copied ===
+tests/*.tmp
+tests/*.log
+
+# === Backup/Temp files ===
+*~
+*.swp
+*.bak
+*.tmp
