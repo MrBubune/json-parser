@@ -1,45 +1,49 @@
-# === CMake build artifacts ===
+# CMake build folders
 /build/
 /CMakeFiles/
-/CMakeCache.txt
-/Makefile
-/install_manifest.txt
+/cmake-build-*/
+
 /*.cmake
-/*.cbp
-/*.sln
-/*.vcxproj*
-/Testing/
+CMakeCache.txt
+Makefile
+install_manifest.txt
 
-# === VS Code ===
+# VS Code settings
 .vscode/
-*.code-workspace
 
-# === OS-specific files ===
-.DS_Store
-Thumbs.db
-
-# === Compiled files ===
+# Windows build artifacts
 *.exe
-*.out
 *.obj
-*.o
-*.a
+*.pdb
 *.lib
 *.dll
+*.exp
+*.log
+
+# macOS/Linux build artifacts
+*.out
+*.a
 *.so
-*.dylib
-*.pdb
-
-# === GoogleTest via FetchContent ===
-_build/
-build/_deps/
-
-# === Test data generated or copied ===
-tests/*.tmp
-tests/*.log
-
-# === Backup/Temp files ===
-*~
+*.dSYM/
 *.swp
-*.bak
+
+# Test results
+Testing/
+CTestTestfile.cmake
+DartConfiguration.tcl
+
+# Generated files
+compile_commands.json
+json_parserConfig.cmake
+json_parserConfigVersion.cmake
+json_parserTargets.cmake
+
+# GoogleTest build cache
+/_deps/
+
+# Ignore bat file output (optional)
 *.tmp
+*.bak
+
+# Misc
+*.DS_Store
