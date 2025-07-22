@@ -25,7 +25,8 @@ namespace JsonParser {
 
   struct JsonValue; // forward declaration
   using JsonObject = std::map<std::string, JsonValue>;
-  struct JsonValue : public std::variant<int, double, JsonObject> {
+
+  struct JsonValue : public std::variant<int, double, std::string, JsonObject> {
     using variant::variant; // inherit constructors
   };
 

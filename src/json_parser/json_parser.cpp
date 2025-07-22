@@ -29,11 +29,33 @@ void JsonParser::ReadFile(const std::string& filepath, std::string& output) {
 
 JsonValue JsonParser::ParsePrimitive(const std::string& text, text_it start, text_it end) {
   std::string substr = text.substr(start - text.begin(), end - start);
-  size_t float_point_index = substr.find(".");
 
-  if (float_point_index >= (end - start)) { // integer
+  // Handle string literals
+  if (*start == '\"' && *(end - 1) == '\"') {
+    std::string result;
+    for (text_it it = start + 1; it < end - 1; ++it) {
+      if (*it == '\\') {
+        ++it;
+        if (it == end - 1) break;
+        switch (*it) {
+          case 'n': result += '\n'; break;
+          case 't': result += '\t'; break;
+          case 'r': result += '\r'; break;
+          case '\\': result += '\\'; break;
+          case '"': result += '"'; break;
+          default: result += *it; break;
+        }
+      } else {
+        result += *it;
+      }
+    }
+    return JsonValue(result);
+  }
+
+  size_t float_point_index = substr.find(".");
+  if (float_point_index == std::string::npos) {
     return JsonValue(std::stoi(substr));
-  } else { // float(double)
+  } else {
     return JsonValue(std::stod(substr));
   }
 }
@@ -68,15 +90,20 @@ std::pair<std::string, JsonValue> JsonParser::RetriveKeyValuePair(
   while (*it == ' ' || *it == '\n') {
     it++;
   }
-
   if (*it == '{') {
-    // another json format
     value = ParseJsonHelper(text, it);
+  } else if (*it == '"') {
+    curr_it = it;
+    ++it;
+    while (*it != '"' || *(it - 1) == '\\') {
+      ++it;
+    }
+    ++it; // include the closing quote
+    value = ParsePrimitive(text, curr_it, it);
   } else {
-    // primitive value(double or int)
     curr_it = it;
     while (isdigit(*it) || *it == '.') {
-      it++;
+      ++it;
     }
     value = ParsePrimitive(text, curr_it, it);
   }
