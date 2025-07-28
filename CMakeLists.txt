@@ -21,6 +21,7 @@ endif()
 # Add the library
 add_library(json_parser
     src/json_parser/json_parser.cpp
+    src/json_loader/json_loader.cpp
 )
 
 # Include public headers
@@ -55,6 +56,8 @@ add_executable(json_parser_tests
     tests/unit/test_parse_strings.cpp
     tests/unit/test_parse_booleans_and_null.cpp
     tests/unit/test_parse_array.cpp
+    tests/unit/test_file_loading.cpp
+
 )
 
 # Link test executable with GTest and your library

@@ -18,8 +18,6 @@ namespace JsonParser {
     using variant::variant; // inherit constructors
   };
 
-  void ReadFile(const std::string& filepath, std::string& output);
-
   JsonValue ParsePrimitive(const std::string& text, text_it start, text_it end);
 
   std::pair<std::string, JsonValue> RetriveKeyValuePair(

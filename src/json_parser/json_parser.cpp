@@ -4,27 +4,14 @@
 #include <cctype> // for isdigit()
 
 #include "json_parser/json_parser.h"
-
+#include "json_loader/json_loader.h"
 
 using namespace JsonParser;
 
 JsonValue JsonParser::ParseJson(const std::string& filepath) {
-  // 1. read the text data from the given file
-  std::string text;
-  ReadFile(filepath, text);
-
-  // 2. parse the text with the helper function and return
-  text_it start = text.begin();
-  return ParseJsonHelper(text, start);
-}
-
-void JsonParser::ReadFile(const std::string& filepath, std::string& output) {
-  std::ifstream file(filepath);
-  std::string line;
-
-  while (std::getline(file, line)) {
-    output.append(line); // append() copies the argument passed as a reference(&std::string)
-  }
+  std::string text = JsonLoader::LoadFromFile(filepath);
+  text_it it = text.begin();
+  return ParseJsonHelper(text, it);
 }
 
 JsonValue JsonParser::ParsePrimitive(const std::string& text, text_it start, text_it end) {
