@@ -2,31 +2,19 @@
 #define JSON_PARSER_H
 
 #include <string>
-#include <map>
+#include <map> // for std::map
 #include <utility> // for std::pair
 #include <variant> // for std::variant
+#include <vector> // for std::vector
 
 namespace JsonParser {
   using text_it = std::string::iterator;
 
-  // Old type unsafe method of handling JSON Values
-  /* 
-  union JsonValue {
-     int i;
-     double d;
-     std::map<std::string, JsonValue>* json;
-   };
-  */
- 
-  /*
-  Note: Using std::variant instead of union for type safety and better handling
-  of different types in C++17. This allows us to avoid manual memory management
-  */
-
   struct JsonValue; // forward declaration
   using JsonObject = std::map<std::string, JsonValue>;
+  using JsonArray = std::vector<JsonValue>;
 
-  struct JsonValue : public std::variant<int, double, std::string, JsonObject> {
+  struct JsonValue : public std::variant<int, double, std::string, bool, std::nullptr_t, JsonObject, JsonArray> {
     using variant::variant; // inherit constructors
   };
 

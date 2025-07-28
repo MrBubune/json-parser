@@ -53,6 +53,8 @@ add_executable(json_parser_tests
     tests/unit/test_parse_objects.cpp
     tests/unit/test_key_value_parsing.cpp
     tests/unit/test_parse_strings.cpp
+    tests/unit/test_parse_booleans_and_null.cpp
+    tests/unit/test_parse_array.cpp
 )
 
 # Link test executable with GTest and your library

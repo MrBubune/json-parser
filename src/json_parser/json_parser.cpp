@@ -30,8 +30,8 @@ void JsonParser::ReadFile(const std::string& filepath, std::string& output) {
 JsonValue JsonParser::ParsePrimitive(const std::string& text, text_it start, text_it end) {
   std::string substr = text.substr(start - text.begin(), end - start);
 
-  // Handle string literals
-  if (*start == '\"' && *(end - 1) == '\"') {
+  // String
+  if (*start == '"' && *(end - 1) == '"') {
     std::string result;
     for (text_it it = start + 1; it < end - 1; ++it) {
       if (*it == '\\') {
@@ -52,6 +52,12 @@ JsonValue JsonParser::ParsePrimitive(const std::string& text, text_it start, tex
     return JsonValue(result);
   }
 
+  // Boolean or null
+  if (substr == "true") return JsonValue(true);
+  if (substr == "false") return JsonValue(false);
+  if (substr == "null") return JsonValue(nullptr);
+
+  // Number
   size_t float_point_index = substr.find(".");
   if (float_point_index == std::string::npos) {
     return JsonValue(std::stoi(substr));
@@ -60,61 +66,105 @@ JsonValue JsonParser::ParsePrimitive(const std::string& text, text_it start, tex
   }
 }
 
+JsonValue ParseArray(const std::string& text, text_it& it) {
+  assert(*it == '[');
+  ++it; // skip '['
+
+  JsonArray array;
+
+  while (*it != ']') {
+    // Skip whitespace
+    while (*it == ' ' || *it == '\n') ++it;
+
+    // Parse the next value
+    if (*it == '{') {
+      array.push_back(ParseJsonHelper(text, it));
+    } else if (*it == '[') {
+      array.push_back(ParseArray(text, it));
+    } else if (*it == '"') {
+      text_it start = ++it;
+      while (*it != '"') ++it;
+      std::string str = text.substr(start - text.begin(), it - start);
+      ++it;
+      array.push_back(str);
+    } else {
+      text_it start = it;
+      while (*it != ',' && *it != ']' && *it != '\n' && *it != ' ') ++it;
+      array.push_back(ParsePrimitive(text, start, it));
+    }
+
+    // Skip whitespace and comma
+    while (*it == ' ' || *it == '\n') ++it;
+    if (*it == ',') ++it;
+  }
+
+  ++it; // skip ']'
+  return JsonValue(array);
+}
+
 std::pair<std::string, JsonValue> JsonParser::RetriveKeyValuePair(
   const std::string& text,
   text_it& it
 ) {
   assert(it != text.end());
 
-  // ignore white spaces & line breaks
+  // Ignore white spaces & line breaks
   while (*it == ' ' || *it == '\n') {
-    it++;
+    ++it;
   }
 
   text_it curr_it;
   std::string key;
   JsonValue value;
-  // if hit a double quote for the first time, it is a key
+
+  // Parse the key (string between quotes)
   if (*it == '\"') {
     curr_it = ++it;
     while (*it != '\"') {
-      it++;
+      ++it;
     }
 
     key = text.substr(curr_it - text.begin(), it - curr_it);
-    assert(*(++it) == ':'); // assert that we are parsing the key string
-    it++;
+    assert(*(++it) == ':'); // move past closing quote and expect a colon
+    ++it; // move past ':'
   }
 
-  // now we need to have its corresponding value
+  // Skip whitespace before the value
   while (*it == ' ' || *it == '\n') {
-    it++;
+    ++it;
   }
+
+  // Parse the value
   if (*it == '{') {
-    value = ParseJsonHelper(text, it);
+    value = ParseJsonHelper(text, it); // Object
+  } else if (*it == '[') {
+    value = ParseArray(text, it);
   } else if (*it == '"') {
+    // String literal
     curr_it = it;
     ++it;
     while (*it != '"' || *(it - 1) == '\\') {
       ++it;
     }
-    ++it; // include the closing quote
+    ++it;
     value = ParsePrimitive(text, curr_it, it);
   } else {
+    // Primitive (number, boolean, null)
     curr_it = it;
-    while (isdigit(*it) || *it == '.') {
+    while (std::isalnum(*it) || *it == '.' || *it == '-') {
       ++it;
     }
     value = ParsePrimitive(text, curr_it, it);
   }
 
-  // after parsing the value, check whether the current iterator points to a comma
+  // Skip optional trailing comma
   if (*it == ',') {
-    it++;
+    ++it;
   }
 
   return std::make_pair(key, value);
 }
+
 
 JsonValue JsonParser::ParseJsonHelper(const std::string& text, text_it& it) {
   assert(*it == '{'); // must start with the left curly bracket
