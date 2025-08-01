@@ -42,7 +42,7 @@ Parse JSON from strings or files, and run clean unit tests with GoogleTest.
 Clone the repo and build it using CMake:
 
 ```sh
-git clone https://github.com/yourusername/json-parser.git
+git clone https://github.com/MrBubune/json-parser.git
 cd json-parser
 mkdir build && cd build
 cmake ..
